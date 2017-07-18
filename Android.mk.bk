@@ -1,0 +1,13 @@
+LOCAL_PATH := $(call my-dir)
+
+include $(CLEAR_VARS)
+
+LOCAL_MODULE := opencltest
+LOCAL_SRC_FILES := HelloWorld.cpp
+
+TARGET_PLATFORM := android-21
+TARGET_ARCH_ABI := arm64-v8a
+
+LOCAL_LDLIBS += -llog -lOpenCL -fuse-ld=gold
+
+include $(BUILD_EXECUTABLE)

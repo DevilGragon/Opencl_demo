@@ -1,0 +1,52 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "tool.h"
+#include <CL/cl.h>
+
+int main()
+{
+    ///Get first available Platform
+    cl_platform_id platform;
+    getPlatform(platform);
+
+    ///get first available GPU
+    cl_device_id *devices=getCl_device_id(platform);
+
+    char        *value;
+    size_t      valueSize;
+    size_t      maxWorkItemPerGroup;
+    cl_uint     maxComputeUnits=0;
+    cl_ulong    maxGlobalMemSize=0;
+    cl_ulong    maxConstantBufferSize=0;
+    cl_ulong    maxLocalMemSize=0;
+
+    ///print the device name
+    clGetDeviceInfo(devices[0], CL_DEVICE_NAME, 0, NULL, &valueSize);
+    value = (char*) malloc(valueSize);
+    clGetDeviceInfo(devices[0], CL_DEVICE_NAME, valueSize, value, NULL);
+    printf("Device Name: %s\n", value);
+    free(value);
+
+    /// print parallel compute units(CU)
+    clGetDeviceInfo(devices[0], CL_DEVICE_MAX_COMPUTE_UNITS,sizeof(maxComputeUnits), &maxComputeUnits, NULL);
+    printf("Parallel compute units: %u\n", maxComputeUnits);
+
+    ///maxWorkItemPerGroup
+    clGetDeviceInfo(devices[0], CL_DEVICE_MAX_WORK_GROUP_SIZE,sizeof(maxWorkItemPerGroup), &maxWorkItemPerGroup, NULL);
+    printf("maxWorkItemPerGroup: %zd\n", maxWorkItemPerGroup);
+
+    /// print maxGlobalMemSize
+    clGetDeviceInfo(devices[0], CL_DEVICE_GLOBAL_MEM_SIZE,sizeof(maxGlobalMemSize), &maxGlobalMemSize, NULL);
+    printf("maxGlobalMemSize: %lu(MB)\n", maxGlobalMemSize/1024/1024);
+
+    /// print maxConstantBufferSize
+    clGetDeviceInfo(devices[0], CL_DEVICE_MAX_CONSTANT_BUFFER_SIZE,sizeof(maxConstantBufferSize), &maxConstantBufferSize, NULL);
+    printf("maxConstantBufferSize: %lu(KB)\n", maxConstantBufferSize/1024);
+
+    /// print maxLocalMemSize
+    clGetDeviceInfo(devices[0], CL_DEVICE_LOCAL_MEM_SIZE,sizeof(maxLocalMemSize), &maxLocalMemSize, NULL);
+    printf("maxLocalMemSize: %lu(KB)\n", maxLocalMemSize/1024);
+
+    free(devices);
+    return 0;
+}
